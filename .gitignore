@@ -1,4 +1,5 @@
 main.py
 httpapi/__pycache__
+httpapi/tests
 .vscode
 client.py

@@ -1,12 +1,14 @@
-from typing import Awaitable, Callable
+from typing import Callable, Awaitable
 from .responses import Response
 from .request import Request
 
+type HandlerFunc = Callable[[Request], Awaitable[Response]]
+
 
 class Handler:
-    def __init__(self, handler: Callable[[Request], Awaitable[Response]]):
+    def __init__(self, handler: HandlerFunc):
         self.handler = handler
-    
+
     @staticmethod
     async def __get_full_body(recv) -> bytes:
         rv = await recv()
@@ -18,12 +20,10 @@ class Handler:
         
         return data
 
-    def __call__(self, scope: dict) -> Callable[[Callable, Callable], Awaitable[None]]:
-        async def _handle(recv, send):
-            await self.handle(scope, recv, send)
-        return _handle
+    async def __call__(self, scope, recv, send) -> None:
+        await self.handle(scope, recv, send)
 
-    async def handle(self, scope, recv, send):
+    async def handle(self, scope, recv, send) -> None:
         body = await self.__get_full_body(recv)
 
         response = await self.handler(Request(body, scope))
