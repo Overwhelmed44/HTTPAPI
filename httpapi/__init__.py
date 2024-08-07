@@ -1,1 +1,1 @@
-from .server import HTTPApi
+from .server import HTTPAPI

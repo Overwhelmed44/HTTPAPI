@@ -1,25 +1,25 @@
 from .handler import Handler
 
 
-class HTTPApi:
+class HTTPAPI:
     def __init__(self):
         self.__endpoints = {}
     
     def __bound_handler(self, path, handler):
         self.__endpoints[path] = Handler(handler)
-        
+
         return handler
 
-    def get(self, path):
+    def get(self, path: str):
         return lambda handler: self.__bound_handler(path + 'GET', handler)
     
-    def post(self, path):
+    def post(self, path: str):
         return lambda handler: self.__bound_handler(path + 'POST', handler)
 
-    def put(self, path):
+    def put(self, path: str):
         return lambda handler: self.__bound_handler(path + 'PUT', handler)
     
-    def delete(self, path):
+    def delete(self, path: str):
         return lambda handler: self.__bound_handler(path + 'DELETE', handler)
     
     def __call__(self, scope):

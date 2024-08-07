@@ -1,8 +1,10 @@
+from typing import Awaitable, Callable
+from .responses import Response
 from .request import Request
 
 
 class Handler:
-    def __init__(self, handler):
+    def __init__(self, handler: Callable[[Request], Awaitable[Response]]):
         self.handler = handler
     
     @staticmethod
@@ -16,7 +18,7 @@ class Handler:
         
         return data
 
-    def __call__(self, scope):
+    def __call__(self, scope: dict) -> Callable[[Callable, Callable], Awaitable[None]]:
         async def _handle(recv, send):
             await self.handle(scope, recv, send)
         return _handle
