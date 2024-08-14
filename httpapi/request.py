@@ -1,8 +1,9 @@
 from json import JSONDecoder
+from typing import Any
 
 
 class Request:
-    def __init__(self, body: bytes, scope: dict):
+    def __init__(self, body: bytes, scope: dict[str, Any]):
         self.body: bytes = body
         self.params: str = scope['query_string'].decode()
         self.client: tuple[str, int] = scope['client']

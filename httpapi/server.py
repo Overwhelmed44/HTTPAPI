@@ -4,37 +4,41 @@ from typing import Callable
 
 class HTTPAPI:
     def __init__(self):
-        self.__endpoints: dict[str, Handler] = {}
-    
-    @property
-    def endpoints(self):
-        return self.__endpoints
+        self.__handlers: dict[str, Handler] = {}
 
-    def get(self, path: str) -> Callable[[HandlerFunc], HandlerFunc]:
-        def bind(handler: HandlerFunc) -> HandlerFunc:
-            self.__endpoints[path + "-GET"] = Handler(handler)
+    def get(self, path: str) -> Callable[[HandlerFunc | Handler], Handler]:
+        def bind(handler: HandlerFunc | Handler) -> Handler:
+            if not isinstance(handler, Handler):
+                handler = Handler(handler)
+            self.__handlers[path + "-GET"] = handler
             return handler
         return bind
     
-    def post(self, path: str) -> Callable[[HandlerFunc], HandlerFunc]:
-        def bind(handler: HandlerFunc) -> HandlerFunc:
-            self.__endpoints[path + "-POST"] = Handler(handler)
+    def post(self, path: str) -> Callable[[HandlerFunc | Handler], Handler]:
+        def bind(handler: HandlerFunc | Handler) -> Handler:
+            if not isinstance(handler, Handler):
+                handler = Handler(handler)
+            self.__handlers[path + "-POST"] = handler
             return handler
         return bind
 
-    def put(self, path: str) -> Callable[[HandlerFunc], HandlerFunc]:
-        def bind(handler: HandlerFunc) -> HandlerFunc:
-            self.__endpoints[path + "-PUT"] = Handler(handler)
+    def put(self, path: str) -> Callable[[HandlerFunc | Handler], Handler]:
+        def bind(handler: HandlerFunc | Handler) -> Handler:
+            if not isinstance(handler, Handler):
+                handler = Handler(handler)
+            self.__handlers[path + "-PUT"] = handler
             return handler
         return bind
     
-    def delete(self, path: str) -> Callable[[HandlerFunc], HandlerFunc]:
-        def bind(handler: HandlerFunc) -> HandlerFunc:
-            self.__endpoints[path + "-DELETE"] = Handler(handler)
+    def delete(self, path: str) -> Callable[[HandlerFunc | Handler], Handler]:
+        def bind(handler: HandlerFunc | Handler) -> Handler:
+            if not isinstance(handler, Handler):
+                handler = Handler(handler)
+            self.__handlers[path + "-DELETE"] = handler
             return handler
         return bind
     
     async def __call__(self, scope, recv, send) -> None:
         assert scope['type'] == 'http'
 
-        await self.__endpoints[scope['path'] + '-' + scope['method']](scope, recv, send)
+        await self.__handlers[scope['path'] + '-' + scope['method']](scope, recv, send)
