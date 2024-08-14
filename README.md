@@ -1,6 +1,6 @@
 # HTTP API
 
-ASGI web framework for building HTTP APIs
+ASGI-compatible framework for building HTTP APIs
 
 - Python 3.12 used
 
